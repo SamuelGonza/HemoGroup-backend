@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { enviarCita } from "../controllers/Email.controller.js";
+import multer from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
