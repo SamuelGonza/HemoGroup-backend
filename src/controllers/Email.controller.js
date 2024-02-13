@@ -14,13 +14,6 @@ export const enviarCita = async (req, res) => {
 
         console.log(nombre, correo, archivos);
 
-        const tempFolder = path.join(__dirname, "temp");
-
-        // Crea la carpeta temp si no existe
-        if (!fs.existsSync(tempFolder)) {
-            fs.mkdirSync(tempFolder);
-        }
-
         const plantillaHtml = `
             <!DOCTYPE html>
             <html lang="en-US">
@@ -106,13 +99,11 @@ export const enviarCita = async (req, res) => {
 
         if (archivos && archivos.length > 0) {
             for (const archivo of archivos) {
-                const filePath = path.join(tempFolder, archivo.originalname);
-                fs.writeFileSync(filePath, archivo.buffer);
                 mailOptions.attachments.push({
                     filename: archivo.originalname,
-                    path: filePath,
+                    content: archivo.buffer,
+                    encoding: 'base64',
                 });
-                fs.unlinkSync(filePath);
             }
         }
 
