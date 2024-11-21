@@ -2,6 +2,10 @@ import { transporter } from "../functions/nodemailer.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
+import PQRSModel from "../models/pqrs.js";
+import { generarNumeroRadicado } from "../utils/generateCodes.js";
+import { uploadCloudinaryFile } from "../utils/Cloudinary.js";
+import { sendPQRSCUpdate } from "../utils/Email.js";
 
 // Obtén la ruta del directorio del módulo actual
 const __filename = fileURLToPath(import.meta.url);
@@ -11,8 +15,6 @@ export const enviarCita = async (req, res) => {
     try {
         const { nombre, correo, telefono, mensaje } = req.body;
         const archivos = req.files;
-
-        console.log(nombre, correo, archivos);
 
         const plantillaHtml = `
             <!DOCTYPE html>
@@ -122,5 +124,259 @@ export const enviarCita = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send({ error: "Error en el servidor" });
+    }
+};
+export const enviarPqrs = async (req, res) => {
+    try {
+        const { nombre, cedula, correo, celular, pqrsType, mensaje} = req.body;
+        const archivos = req.file;
+
+
+        let image = {
+            public_id: "",
+            url: ""
+        }
+
+        if(archivos){
+            const result = await uploadCloudinaryFile(archivos)
+
+            if(result){
+                image = {
+                    public_id: result.public_id,
+                    url: result.secure_url
+                }
+            }
+
+        }
+
+        const newPqrs = new PQRSModel({
+            nombre,
+            cedula,
+            correo,
+            celular,
+            pqrsType,
+            mensaje,
+            document: image,
+            state: "Recibida",
+            n_radicado: generarNumeroRadicado(),
+            created: new Date()
+        })
+
+        await newPqrs.save()
+
+        const plantillaHtml = `
+            
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/megabyte');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Megabyte', sans-serif !important;
+        }
+        
+        body{
+            background-color: gainsboro;
+        }
+        
+        .email-wrapper{
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            margin: auto;
+            padding: 12px;
+        }
+      
+        .logo{
+          width: 140px;
+          height: 140px;
+          margin: auto;
+        }
+      
+        .logo img{
+          width: 140px;
+          height: 140px;
+          object-fit: contain;
+        }
+      
+        .big-title{
+          width: 100%;
+          text-align: center;
+        }
+      
+        .subtitle{
+          text-align: center;
+          margin: 10px 0;
+        }
+      
+        .client-message{
+          width: 80%;
+          margin: auto;
+          background-color: #74cfe2;
+          padding: 10px;
+          border-radius: 16px;
+          color: white;
+        }
+      
+        footer{
+          width: 100%;
+          text-align: center;
+          margin-top: 40px;
+          border-top: 1px solid gainsboro;
+          padding: 20px 0;
+        }
+      
+        .document{
+          margin-top: 40px;
+          padding: 20px;
+          border: 3px dashed black;
+        }
+      
+        .client-info{
+          width: 80%;
+          margin: 20px auto;
+        }
+      
+        .client-info p {
+            font-size: 16px;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .client-info p span {
+            font-weight: bold;
+            color: #74cfe2;
+        }
+      
+        @media (max-width: 600px) {
+            .client-info h1 {
+                font-size: 24px;
+            }
+            .client-info p {
+                font-size: 14px;
+            }
+        } /* Cierre de media query */
+      
+    </style>
+    <title>Nueva PQRS: ${newPqrs.pqrsType}</title>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="logo">
+        <img src="https://res.cloudinary.com/appsftw/image/upload/v1731703788/correos%20assets/uk0ltklutkwyikzuglfb.png"/>
+    </div>
+    
+    <h1 class="big-title">Nueva PQRSC: ${newPqrs.pqrsType}</h1>
+    <h2 class="big-title">Número de radicado: ${newPqrs.n_radicado}</h2>
+    
+    <p class="subtitle">Hola, el cliente ${newPqrs.nombre} ha enviado un PQRSC del tipo ${newPqrs.pqrsType}</p>
+    
+    <div class="client-info">
+        <p><span>Nombre Completo:</span> ${newPqrs.nombre}</p>
+        <p><span>Cédula:</span> ${newPqrs.cedula}</p>
+        <p><span>Correo:</span> ${newPqrs.correo}</p>
+        <p><span>Teléfono:</span> ${newPqrs.celular}</p>
+        <p><span>Tipo de PQRS:</span> ${newPqrs.pqrsType}</p>
+    </div>
+    
+    <div class="client-message">
+      <h2 class="big-title">Mensaje del cliente</h2>
+      ${newPqrs.mensaje}
+    </div>
+    
+    <div class="document">
+      Archivos enviados: ${archivos && archivos.originalname || "No se envió ningún archivo"}
+    </div>
+    
+    <footer>
+        HemoGroup 
+ 2024 -  Todos los derechos reservados a marca y empresa
+    </footer>
+  </div>
+</body>
+</html>
+        `;
+
+        const mailOptions = {
+            from: `"Nueva PQRS de ${nombre}" <no-reply@hemogroup.com>`,
+            to: correo,
+            subject: `Notificación de PQRS ${pqrsType}`,
+            html: plantillaHtml,
+            attachments: archivos ? [
+                {
+                    filename: req.file.originalname,
+                    content: req.file.buffer,
+                    encoding: 'base64'
+                }
+            ]: [],
+        };
+
+        await transporter.sendMail(mailOptions, function (err, info) {
+            if (err) {
+                res.status(500).send({
+                    error: "Error al enviar el correo electrónico",
+                });
+            } else {
+                res.status(200).send({
+                    message: "Correo electrónico enviado exitosamente",
+                });
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ error: "Error en el servidor" });
+    }
+};
+
+
+export const getAllPrqs = async (req, res) => {
+    try {
+        const getPqrs = await PQRSModel.find().lean()
+
+        if(getPqrs.length === 0){
+            res.status(404).json({message: "No hay PQRS aún"})
+            return;
+        }
+
+        res.json({message: "Correcto", data: [...getPqrs]})
+    } catch (err) {
+        res.status(500).json({message: "Error interno", err})
+    }
+}
+
+export const getPqrscById = async (req, res) => {
+    try {
+        const {radicado} = req.params;
+        const getPqrsc = await PQRSSchema.findOne({n_radicado: radicado}).lean()
+
+        if(!getPqrsc) res.status(404).json({message: "Este pqrsc no existe"})
+
+        res.json({message: "Correcto", data: {...getPqrsc}})
+    } catch (err) {
+        res.status(500).json({ message: "Error del servidor" });
+    }
+}
+
+export const sendPQRSCState = async (req, res) => {
+    try {
+        const { state, n_radicado, message } = req.body;
+
+        const findPQRSC = await PQRSSchema.findOneAndUpdate({ n_radicado }, { state }, { new: true }).lean();
+
+        if (!findPQRSC) res.status(404).json({ message: "El pqrsc no existe" });
+
+
+        await sendPQRSCUpdate({ client: {nombre: findPQRSC?.nombre, correo: findPQRSC?.correo}, pqrsc: findPQRSC, message});
+
+        res.json({ message: "PQRS enviada con éxito" });
+    } catch (err) {
+        res.status(500).json({ message: "Error del servidor" });
     }
 };
