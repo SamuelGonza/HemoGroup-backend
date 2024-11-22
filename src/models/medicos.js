@@ -9,6 +9,7 @@ const MedicosSchema = new Schema({
         url: {type: String, default: ""}
     },
     created: {type: Date, default: new Date()},
+    
 })
 
 export const MedicosModel = model("medico", MedicosSchema)
