@@ -202,7 +202,7 @@ export const enviarCita = async (req, res) => {
 
         const mailOptions = {
             from: "no-reply@hemogroup.com",
-            to: "samvasgoo@gmail.com",
+            to: "gestor1@hemogroup.com.co",
             subject: `Nueva solicitud de Cita del cliente ${nombre}`,
             html: plantillaHtml,
             attachments: archivosMap.length > 0 ? archivosMap: [],
@@ -229,8 +229,6 @@ export const enviarPqrs = async (req, res) => {
     try {
         const { fullName, cedula, email, phone, pqrsType, description, isAnonymous} = req.body;
         const archivos = req.file;
-
-        console.log(req.body)
 
         const isAnonymousParsed = isAnonymous === 'true' ? true: isAnonymous === 'false' && false
 

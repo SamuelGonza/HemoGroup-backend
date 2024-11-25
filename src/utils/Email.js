@@ -385,7 +385,7 @@ export const sendContacto = async (client) => {
 
     const mailOptions = {
       from: `"Nuevo mensaje de contacto" <no-reply@tecnotics.co>`,
-      to: `calidad@hemogroup.com.co`,
+      to: `gestor1@hemogroup.com.co`,
       subject: `El cliente ${client.nombre} ha enviado un mensaje de contacto.`,
       html: plantillaHtml,
   };
