@@ -512,7 +512,7 @@ export const enviarPqrs = async (req, res) => {
 <body>
   <div class="email-wrapper">
     <div class="logo">
-        <img src="https://res.cloudinary.com/appsftw/image/upload/v1731689869/correos%20assets/hwtmmgvnwfkfrv6rgvmb.png"/>
+        <img src="https://res.cloudinary.com/appsftw/image/upload/v1731703788/correos%20assets/uk0ltklutkwyikzuglfb.png"/>
     </div>
     
     <h1 class="big-title">Nueva PQRSC: ${newPqrs.pqrsType}</h1>
@@ -538,7 +538,7 @@ export const enviarPqrs = async (req, res) => {
     </div>
     
     <footer>
-        Vlips 
+        Hemo Group 
  2024 -  Todos los derechos reservados a marca y empresa
     </footer>
   </div>
