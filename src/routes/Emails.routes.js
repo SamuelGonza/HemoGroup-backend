@@ -13,8 +13,8 @@ router.post("/v1/citas/send", upload.array("archivos", 3), enviarCita);
 
 
 router.post("/v1/pqrs/send", uploadDocuments, enviarPqrs);
-router.get("/v1/pqrs/:radicado", getPqrscById)
 router.get("/v1/pqrs/get", getAllPrqs)
+router.get("/v1/pqr/:radicado", getPqrscById)
 router.put("/v1/pqrsc", sendPQRSCState)
 
 router.post("/v1/contacto/send", sendContactoEmail)

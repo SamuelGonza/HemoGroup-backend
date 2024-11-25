@@ -450,7 +450,7 @@ export const enviarPqrs = async (req, res) => {
 
         `
 
-        const users = [{correo: email, rol: "client"}, {correo: "samvasgoo@gmail.com", rol: "soporte"}]
+        const users = [{correo: email, rol: "client"}, {correo: "calidad@hemogroup.com.co", rol: "soporte"}]
 
         for(const user of users){
             const mailOptions = {
