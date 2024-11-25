@@ -1,6 +1,6 @@
 import { transporter } from "../functions/nodemailer.js";
 
-export const sendPQRSCUpdate = async ({client, pqrsc, message}) => {
+export const sendPQRSCUpdate = async ({client, pqrsc, message, onlyMessage = false}) => {
     try {
     
         const plantillaHtml = `
@@ -144,7 +144,7 @@ export const sendPQRSCUpdate = async ({client, pqrsc, message}) => {
         } /* Cierre de media query */
       
     </style>
-    <title>Ha cambiado el estado de tu PQRSC</title>
+    <title>${onlyMessage ? "Haz recibido un mensaje sobre tu PQRS": "Ha cambiado el estado de tu PQRSC"}</title>
 </head>
 <body>
   <div class="email-wrapper">
@@ -152,7 +152,7 @@ export const sendPQRSCUpdate = async ({client, pqrsc, message}) => {
         <img src="https://res.cloudinary.com/appsftw/image/upload/v1731703788/correos%20assets/uk0ltklutkwyikzuglfb.png"/>
     </div>
     
-    <h1 class="big-title">El estado de tu PQRSC ha cambiado</h1>
+    <h1 class="big-title">${onlyMessage ? "Haz recibido un mensaje sobre tu PQRS": "El estado de tu PQRSC ha cambiado"}</h1>
     <h2 class="big-title">Número de radicado: ${pqrsc.n_radicado}</h2>
     
     <p class="subtitle">Hola, ${client.nombre}, nos hemos enterado de tu PQRSC y el su estado ha cambiado</p>
@@ -188,7 +188,7 @@ export const sendPQRSCUpdate = async ({client, pqrsc, message}) => {
         `
 
         const mailOptions = {
-            from: `"El estado de tu PQRS ha cambiado" <no-reply@tecnotics.co>`,
+            from: `"${onlyMessage ? "Mensaje de respuesta de PQRS - Hemo Group": "El estado de tu PQRS ha cambiado"}" <no-reply@tecnotics.co>`,
             to: `${client.correo}`,
             subject: `El estado de tu PQRSC ha cambiado, te daremos respuesta lo mas pronto posible`,
             html: plantillaHtml,

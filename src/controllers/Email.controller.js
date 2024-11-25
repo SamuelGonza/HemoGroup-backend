@@ -13,101 +13,200 @@ const __dirname = path.dirname(__filename);
 
 export const enviarCita = async (req, res) => {
     try {
-        const { nombre, correo, telefono, mensaje } = req.body;
+        const { nombre, correo, telefono, mensaje, eps } = req.body;
         const archivos = req.files;
 
         const plantillaHtml = `
             <!DOCTYPE html>
-            <html lang="en-US">
-                <head>
-                    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-                    <title>Hemo Group Solicitud de cita.</title>
-                    <meta name="description" content="Hemo Group Solicitud de cita.">
-                    <style type="text/css">
-                        a:hover {
-                            text-decoration: underline !important;
-                        }
-                    </style>
-                </head>
-                <body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0px; background-color: #f2f3f8;" leftmargin="0">
-                    <table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor="#f2f3f8" style="@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;">
-                        <tr>
-                            <td>
-                                <table style="background-color: #f2f3f8; max-width:670px; margin:0 auto;" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td style="height:80px;">&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:center;">
-                                            <a href="https://hemogroup.netlify.app/" title="logo" target="_blank">
-                                                <img width="60" src="../assets/Hemogroup.png" title="logo" alt="Hemo Group Logo">
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height:20px;">&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0" style="max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);">
-                                                <tr>
-                                                    <td style="height:40px;">&nbsp;</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding:0 35px;">
-                                                        <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;">Nueva cita solicitada</h1>
-                                                        <span style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
-                                                        <p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
-                                                            El usuario ${nombre} con la dirección de correo electrónico ${correo} y telefono ${telefono} ha solicitado una cita y ha incluido archivos multimedia como anexo.
-                                                        </p>
-                                                        <p style="color:#455056; font-size:15px;line-height:24px; margin-top:20px;">
-                                                            ${mensaje}
-                                                        </p>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="height:40px;">&nbsp;</td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height:20px;">&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:center;">
-                                            <p style="font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;">&copy; <strong>https://hemogroup.netlify.app</strong></p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height:80px;">&nbsp;</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--/100% body table-->
-                </body>
-            </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/megabyte');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Megabyte', sans-serif !important;
+        }
+        
+        body{
+            background-color: gainsboro;
+        }
+        
+        .email-wrapper{
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            margin: auto;
+            padding: 12px;
+        }
+      
+        .logo{
+          width: 140px;
+          height: 140px;
+          margin: auto;
+        }
+      
+        .logo img{
+          width: 140px;
+          height: 140px;
+          object-fit: contain;
+        }
+      
+        .big-title{
+          width: 100%;
+          text-align: center;
+        }
+      
+        .subtitle{
+          text-align: center;
+          margin: 10px 0;
+        }
+      
+        .client-message{
+          width: 80%;
+          margin: auto;
+          background-color: #74cfe2;
+          padding: 10px;
+          border-radius: 16px;
+          color: white;
+        }
+      
+        footer{
+          width: 100%;
+          text-align: center;
+          margin-top: 40px;
+          border-top: 1px solid gainsboro;
+          padding: 20px 0;
+        }
+      
+        .document{
+          margin-top: 40px;
+          padding: 20px;
+          border: 3px dashed black;
+        }
+      
+        .client-info{
+          width: 80%;
+          margin: 20px auto;
+        }
+      
+        .client-info p {
+            font-size: 16px;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .client-info p span {
+            font-weight: bold;
+            color: #74cfe2;
+        }
+      
+      .states-container{
+        width: 100%;
+        margin-top: 60px;
+      }
+      
+      .recibida{
+        display: inline-block;
+        width: 32%;
+        min-height: 30px;
+        background-color: gray;
+        text-align: center;
+        color: white;
+      }
+      
+      .en-revision{
+        display: inline-block;
+        width: 32%;
+        min-height: 30px;
+        background-color: orange;
+        text-align: center;
+        color: white;
+      }
+      
+      .completada{
+        display: inline-block;
+        width: 32%;
+        min-height: 30px;
+        background-color: green;
+        text-align: center;
+        color: white;
+      }
+      
+      .state-big{
+        min-height: 70px !important;
+        
+      }
+      
+      
+        @media (max-width: 600px) {
+            .client-info h1 {
+                font-size: 24px;
+            }
+            .client-info p {
+                font-size: 14px;
+            }
+        } /* Cierre de media query */
+      
+    </style>
+    <title>NUEVA SOLICITUD DE CITA</title>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="logo">
+        <img src="https://res.cloudinary.com/appsftw/image/upload/v1731703788/correos%20assets/uk0ltklutkwyikzuglfb.png"/>
+    </div>
+    
+    <h1 class="big-title">Nueva solicitud de cita del cliente ${nombre}</h1>
+   
+   
+    
+    <div class="client-info">
+        <p><span>Nombre:</span> ${nombre}</p>
+      <p><span>Correo:</span> ${correo}</p>
+      <p><span>Telefono:</span> ${telefono}</p>
+       <p><span>EPS:</span> ${eps}</p>
+    </div>
+
+    <div class="client-message">
+      <h2 class="big-title">Mensaje del cliente</h2>
+      ${mensaje}
+    </div>
+    
+     <div class="document">
+      Archivos enviados: ${archivos && archivos.length > 0 ? `${archivos.length} archivos`: "No se envió ningún archivo"}
+    </div>
+    
+  
+    
+    <footer>
+        HemoGroup 
+ 2024 -  Todos los derechos reservados a marca y empresa
+    </footer>
+  </div>
+</body>
+</html>
         `;
+
+        const archivosMap = archivos.map((archivo) => {
+            return {
+                filename: archivo.originalname,
+                content: archivo.buffer,
+            }
+        })
 
         const mailOptions = {
             from: "no-reply@hemogroup.com",
-            to: correo,
-            subject: "Notificación de Cita",
+            to: "samvasgoo@gmail.com",
+            subject: `Nueva solicitud de Cita del cliente ${nombre}`,
             html: plantillaHtml,
-            attachments: [],
+            attachments: archivosMap.length > 0 ? archivosMap: [],
         };
-
-        if (archivos && archivos.length > 0) {
-            for (const archivo of archivos) {
-                mailOptions.attachments.push({
-                    filename: archivo.originalname,
-                    content: archivo.buffer,
-                    encoding: 'base64',
-                });
-            }
-        }
 
         await transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
@@ -513,14 +612,20 @@ export const getPqrscById = async (req, res) => {
 }
 export const sendPQRSCState = async (req, res) => {
     try {
-        const { state, n_radicado, message } = req.body;
+        const { state, n_radicado, message, onlyMessage } = req.body;
 
-        const findPQRSC = await PQRSModel.findOneAndUpdate({ n_radicado }, { state }, { new: true }).lean();
+        let findPqrs = {}
 
-        if (!findPQRSC) res.status(404).json({ message: "El pqrsc no existe" });
+        if(onlyMessage){
+            findPqrs = await PQRSModel.findOne({n_radicado}).lean()
+        }else{
+            findPqrs = await PQRSModel.findOneAndUpdate({ n_radicado }, { state }, { new: true }).lean();
+        }
+
+        if (!findPqrs) res.status(404).json({ message: "El pqrsc no existe" });
 
 
-        await sendPQRSCUpdate({ client: {nombre: findPQRSC?.nombre, correo: findPQRSC?.correo}, pqrsc: findPQRSC, message});
+        await sendPQRSCUpdate({ client: {nombre: findPqrs?.nombre, correo: findPqrs?.correo}, pqrsc: findPqrs, message, onlyMessage});
 
         res.json({ message: "PQRS enviada con éxito" });
     } catch (err) {

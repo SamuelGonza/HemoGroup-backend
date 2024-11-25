@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan'
 import EmailRoute from './routes/Emails.routes.js'
 import MedicosRoutes from './routes/Medicos.routes.js'
+import AdminsRoutes from './routes/Admins.routes.js'
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 
 app.use(EmailRoute)
 app.use(MedicosRoutes)
+app.use(AdminsRoutes)
 
 app.all("*", (req, res) => {
     res.status(404).json({ message: "This path doesn't exist" });
